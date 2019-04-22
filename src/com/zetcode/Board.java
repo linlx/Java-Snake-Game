@@ -5,29 +5,35 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class Board extends JPanel implements ActionListener {
 
-    private final int B_WIDTH = 300;
-    private final int B_HEIGHT = 300;
-    private final int DOT_SIZE = 10;
-    private final int ALL_DOTS = 900;
-    private final int RAND_POS = 29;
-    private final int DELAY = 140;
+    private final int DOT_SIZE = 20;
+    private final int DOT_W = 30;
+    private final int DOT_H = 30;
+    private final int B_WIDTH = DOT_SIZE*DOT_W;
+    private final int B_HEIGHT = DOT_SIZE*DOT_H;
+    private final int ALL_DOTS = DOT_W*DOT_H;
+    private final int RAND_POS = B_WIDTH/DOT_SIZE;
+    private final int DELAY = 50;
 
     private final int x[] = new int[ALL_DOTS];
     private final int y[] = new int[ALL_DOTS];
 
-    private int dots;
+    private int body;
     private int apple_x;
     private int apple_y;
 
@@ -61,22 +67,36 @@ public class Board extends JPanel implements ActionListener {
     private void loadImages() {
 
         ImageIcon iid = new ImageIcon("src/resources/dot.png");
-        ball = iid.getImage();
+        //ball = iid.getImage();
+        ball = getScaledImage(iid.getImage(),DOT_SIZE,DOT_SIZE);
 
         ImageIcon iia = new ImageIcon("src/resources/apple.png");
-        apple = iia.getImage();
+        //apple = iia.getImage();
+        apple = getScaledImage(iia.getImage(),DOT_SIZE,DOT_SIZE);
 
         ImageIcon iih = new ImageIcon("src/resources/head.png");
-        head = iih.getImage();
+        //head = iih.getImage();
+        head = getScaledImage(iih.getImage(),DOT_SIZE,DOT_SIZE);
+    }
+    
+    private Image getScaledImage(Image srcImg, int w, int h){
+        BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = resizedImg.createGraphics();
+
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.drawImage(srcImg, 0, 0, w, h, null);
+        g2.dispose();
+
+        return resizedImg;
     }
 
     private void initGame() {
 
-        dots = 3;
+    	body = 3;
 
-        for (int z = 0; z < dots; z++) {
-            x[z] = 50 - z * 10;
-            y[z] = 50;
+        for (int z = 0; z < body; z++) {
+            x[z] = (int)(B_WIDTH/2)-(z*DOT_SIZE);
+            y[z] = (int)(B_HEIGHT/2);
         }
         
         locateApple();
@@ -98,7 +118,7 @@ public class Board extends JPanel implements ActionListener {
 
             g.drawImage(apple, apple_x, apple_y, this);
 
-            for (int z = 0; z < dots; z++) {
+            for (int z = 0; z < body; z++) {
                 if (z == 0) {
                     g.drawImage(head, x[z], y[z], this);
                 } else {
@@ -129,14 +149,14 @@ public class Board extends JPanel implements ActionListener {
 
         if ((x[0] == apple_x) && (y[0] == apple_y)) {
 
-            dots++;
+        	body++;
             locateApple();
         }
     }
 
     private void move() {
 
-        for (int z = dots; z > 0; z--) {
+        for (int z = body; z > 0; z--) {
             x[z] = x[(z - 1)];
             y[z] = y[(z - 1)];
         }
@@ -160,7 +180,7 @@ public class Board extends JPanel implements ActionListener {
 
     private void checkCollision() {
 
-        for (int z = dots; z > 0; z--) {
+        for (int z = body; z > 0; z--) {
 
             if ((z > 4) && (x[0] == x[z]) && (y[0] == y[z])) {
                 inGame = false;
@@ -195,6 +215,8 @@ public class Board extends JPanel implements ActionListener {
 
         r = (int) (Math.random() * RAND_POS);
         apple_y = ((r * DOT_SIZE));
+        
+        System.out.print("apple location:"+apple_x+","+apple_y);
     }
 
     @Override
