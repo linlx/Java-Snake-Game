@@ -9,10 +9,7 @@ public class Snake extends JFrame {
         
         initUI();
     }
-    
-    /*
-     * 視窗設定
-     */
+
     private void initUI() {
         
         add(new Board());
@@ -25,10 +22,6 @@ public class Snake extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
-
-    /*
-     * 啟動程式
-     */
     public static void main(String[] args) {
         
         EventQueue.invokeLater(() -> {
