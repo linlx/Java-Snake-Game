@@ -22,18 +22,24 @@ import javax.swing.Timer;
 public class Board extends JPanel implements ActionListener {
 
     private final int DOT_SIZE = 20;
-    private final int DOT_W = 30;
-    private final int DOT_H = 30;
+    
+    private final int DOT_W = 20;
+    
+    private final int DOT_H = 20;
+    
     private final int B_WIDTH = DOT_SIZE*DOT_W;
     private final int B_HEIGHT = DOT_SIZE*DOT_H;
     private final int ALL_DOTS = DOT_W*DOT_H;
-    private final int RAND_POS = B_WIDTH/DOT_SIZE;
-    private final int DELAY = 50;
+    
+    private final int RAND_POS = DOT_W-1;
+    
+    private final int DELAY = 150;
 
-    private final int x[] = new int[ALL_DOTS];
-    private final int y[] = new int[ALL_DOTS];
+    private final int snake_x[] = new int[ALL_DOTS];
+    private final int snake_y[] = new int[ALL_DOTS];
 
-    private int body;
+    private int body=3;
+    
     private int apple_x;
     private int apple_y;
 
@@ -67,15 +73,12 @@ public class Board extends JPanel implements ActionListener {
     private void loadImages() {
 
         ImageIcon iid = new ImageIcon("src/resources/dot.png");
-        //ball = iid.getImage();
         ball = getScaledImage(iid.getImage(),DOT_SIZE,DOT_SIZE);
 
         ImageIcon iia = new ImageIcon("src/resources/apple.png");
-        //apple = iia.getImage();
         apple = getScaledImage(iia.getImage(),DOT_SIZE,DOT_SIZE);
 
         ImageIcon iih = new ImageIcon("src/resources/head.png");
-        //head = iih.getImage();
         head = getScaledImage(iih.getImage(),DOT_SIZE,DOT_SIZE);
     }
     
@@ -92,11 +95,11 @@ public class Board extends JPanel implements ActionListener {
 
     private void initGame() {
 
-    	body = 3;
-
         for (int z = 0; z < body; z++) {
-            x[z] = (int)(B_WIDTH/2)-(z*DOT_SIZE);
-            y[z] = (int)(B_HEIGHT/2);
+        	snake_x[z] = (int)(B_WIDTH/2)-(z*DOT_SIZE);
+        	snake_y[z] = (int)(B_HEIGHT/2);
+        	
+        	System.out.print("snake("+z+","+z+"):"+snake_x[z]+","+snake_y[z]+"\n");
         }
         
         locateApple();
@@ -120,9 +123,9 @@ public class Board extends JPanel implements ActionListener {
 
             for (int z = 0; z < body; z++) {
                 if (z == 0) {
-                    g.drawImage(head, x[z], y[z], this);
+                    g.drawImage(head, snake_x[z], snake_y[z], this);
                 } else {
-                    g.drawImage(ball, x[z], y[z], this);
+                    g.drawImage(ball, snake_x[z], snake_y[z], this);
                 }
             }
 
@@ -147,34 +150,34 @@ public class Board extends JPanel implements ActionListener {
 
     private void checkApple() {
 
-        if ((x[0] == apple_x) && (y[0] == apple_y)) {
+        if ((snake_x[0] == apple_x) && (snake_y[0] == apple_y)) {
 
         	body++;
-            locateApple();
+          locateApple();
         }
     }
 
     private void move() {
 
         for (int z = body; z > 0; z--) {
-            x[z] = x[(z - 1)];
-            y[z] = y[(z - 1)];
+        	snake_x[z] = snake_x[(z - 1)];
+        	snake_y[z] = snake_y[(z - 1)];
         }
 
         if (leftDirection) {
-            x[0] -= DOT_SIZE;
+        	snake_x[0] -= DOT_SIZE;
         }
 
         if (rightDirection) {
-            x[0] += DOT_SIZE;
+        	snake_x[0] += DOT_SIZE;
         }
 
         if (upDirection) {
-            y[0] -= DOT_SIZE;
+        	snake_y[0] -= DOT_SIZE;
         }
 
         if (downDirection) {
-            y[0] += DOT_SIZE;
+        	snake_y[0] += DOT_SIZE;
         }
     }
 
@@ -182,24 +185,24 @@ public class Board extends JPanel implements ActionListener {
 
         for (int z = body; z > 0; z--) {
 
-            if ((z > 4) && (x[0] == x[z]) && (y[0] == y[z])) {
+            if ((snake_x[0] == snake_x[z]) && (snake_y[0] == snake_y[z])) {
                 inGame = false;
             }
         }
 
-        if (y[0] >= B_HEIGHT) {
+        if (snake_y[0] >= B_HEIGHT) {
             inGame = false;
         }
 
-        if (y[0] < 0) {
+        if (snake_y[0] < 0) {
             inGame = false;
         }
 
-        if (x[0] >= B_WIDTH) {
+        if (snake_x[0] >= B_WIDTH) {
             inGame = false;
         }
 
-        if (x[0] < 0) {
+        if (snake_x[0] < 0) {
             inGame = false;
         }
         
@@ -215,8 +218,6 @@ public class Board extends JPanel implements ActionListener {
 
         r = (int) (Math.random() * RAND_POS);
         apple_y = ((r * DOT_SIZE));
-        
-        System.out.print("apple location:"+apple_x+","+apple_y);
     }
 
     @Override
