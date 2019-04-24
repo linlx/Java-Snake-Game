@@ -35,10 +35,7 @@ public class Snake extends JFrame {
     public static void main(String[] args) {
         
         EventQueue.invokeLater(() -> {
-<<<<<<< HEAD
         	//創建一個Snake貪食蛇物件，並顯示視窗
-=======
->>>>>>> parent of edd1d17... change game properties
             JFrame ex = new Snake();
             ex.setVisible(true);
         });
