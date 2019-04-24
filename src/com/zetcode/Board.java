@@ -21,25 +21,48 @@ import javax.swing.Timer;
 
 public class Board extends JPanel implements ActionListener {
 
+	//蛇頭、蛇身、蘋果的 「基本大小」
     private final int DOT_SIZE = 20;
+<<<<<<< HEAD
     
+    //視窗寬度為幾個「基本大小」
     private final int DOT_W = 20;
     
+    //視窗高度為幾個「基本大小」
     private final int DOT_H = 20;
     
     private final int B_WIDTH = DOT_SIZE*DOT_W;
     private final int B_HEIGHT = DOT_SIZE*DOT_H;
     private final int ALL_DOTS = DOT_W*DOT_H;
     
+    //蘋果亂數位置，落點為0~(DOT_W-1)，避免畫到視窗畫布之外
     private final int RAND_POS = DOT_W-1;
     
+    //遊戲速度，畫面刷新速度單位是ms，1000ms = 1sec
     private final int DELAY = 150;
 
+    //蛇身體在畫布上的位置，(x,y)儲存內容是像素位置
     private final int snake_x[] = new int[ALL_DOTS];
     private final int snake_y[] = new int[ALL_DOTS];
 
+    //蛇身初始長度
     private int body=3;
     
+    //蘋果位置(x,y)
+=======
+    private final int DOT_W = 30;
+    private final int DOT_H = 30;
+    private final int B_WIDTH = DOT_SIZE*DOT_W;
+    private final int B_HEIGHT = DOT_SIZE*DOT_H;
+    private final int ALL_DOTS = DOT_W*DOT_H;
+    private final int RAND_POS = B_WIDTH/DOT_SIZE;
+    private final int DELAY = 50;
+
+    private final int x[] = new int[ALL_DOTS];
+    private final int y[] = new int[ALL_DOTS];
+
+    private int body;
+>>>>>>> parent of edd1d17... change game properties
     private int apple_x;
     private int apple_y;
 
@@ -70,18 +93,23 @@ public class Board extends JPanel implements ActionListener {
         initGame();
     }
 
+    //載入圖片
     private void loadImages() {
 
         ImageIcon iid = new ImageIcon("src/resources/dot.png");
+        //ball = iid.getImage();
         ball = getScaledImage(iid.getImage(),DOT_SIZE,DOT_SIZE);
 
         ImageIcon iia = new ImageIcon("src/resources/apple.png");
+        //apple = iia.getImage();
         apple = getScaledImage(iia.getImage(),DOT_SIZE,DOT_SIZE);
 
         ImageIcon iih = new ImageIcon("src/resources/head.png");
+        //head = iih.getImage();
         head = getScaledImage(iih.getImage(),DOT_SIZE,DOT_SIZE);
     }
     
+    //調整圖片大小
     private Image getScaledImage(Image srcImg, int w, int h){
         BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = resizedImg.createGraphics();
@@ -93,21 +121,36 @@ public class Board extends JPanel implements ActionListener {
         return resizedImg;
     }
 
+    /*
+     * 初始化遊戲
+     * 畫布坐標系(x,y)簡介如下，起點為左上角
+     * (0,0),(1,0),(2,0),(3,0)
+     * (0,1),(1,1),(2,1),(3,1)
+     * (0,2),(1,2),(2,2),(3,2)
+     * (0,3),(1,3),(2,3),(3,3)
+     */
     private void initGame() {
 
+<<<<<<< HEAD
+    	//蛇在畫面中央
+=======
+    	body = 3;
+
+>>>>>>> parent of edd1d17... change game properties
         for (int z = 0; z < body; z++) {
-        	snake_x[z] = (int)(B_WIDTH/2)-(z*DOT_SIZE);
-        	snake_y[z] = (int)(B_HEIGHT/2);
-        	
-        	System.out.print("snake("+z+","+z+"):"+snake_x[z]+","+snake_y[z]+"\n");
+            x[z] = (int)(B_WIDTH/2)-(z*DOT_SIZE);
+            y[z] = (int)(B_HEIGHT/2);
         }
         
+        //亂數設定蘋果位置
         locateApple();
 
+        //畫面刷新，每個 DELAY 時間後執行 ActionListener.actionPerformed()
         timer = new Timer(DELAY, this);
         timer.start();
     }
 
+    //實作JPanel
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -115,17 +158,27 @@ public class Board extends JPanel implements ActionListener {
         doDrawing(g);
     }
     
+    //視窗畫布繪圖
     private void doDrawing(Graphics g) {
         
         if (inGame) {
 
+        	//畫蘋果位置
             g.drawImage(apple, apple_x, apple_y, this);
 
             for (int z = 0; z < body; z++) {
                 if (z == 0) {
+<<<<<<< HEAD
+                	//畫蛇頭
                     g.drawImage(head, snake_x[z], snake_y[z], this);
                 } else {
+                	//畫蛇身
                     g.drawImage(ball, snake_x[z], snake_y[z], this);
+=======
+                    g.drawImage(head, x[z], y[z], this);
+                } else {
+                    g.drawImage(ball, x[z], y[z], this);
+>>>>>>> parent of edd1d17... change game properties
                 }
             }
 
@@ -150,62 +203,100 @@ public class Board extends JPanel implements ActionListener {
 
     private void checkApple() {
 
+<<<<<<< HEAD
+    	//蛇頭位置=蘋果位置
         if ((snake_x[0] == apple_x) && (snake_y[0] == apple_y)) {
+=======
+        if ((x[0] == apple_x) && (y[0] == apple_y)) {
+>>>>>>> parent of edd1d17... change game properties
 
+        	//蛇身+1
         	body++;
-          locateApple();
+<<<<<<< HEAD
+        	//重新亂數給蘋果位置
+=======
+>>>>>>> parent of edd1d17... change game properties
+            locateApple();
         }
     }
 
     private void move() {
 
+    	//蛇身每一格複製到前一格身體位置
         for (int z = body; z > 0; z--) {
-        	snake_x[z] = snake_x[(z - 1)];
-        	snake_y[z] = snake_y[(z - 1)];
+            x[z] = x[(z - 1)];
+            y[z] = y[(z - 1)];
         }
 
+        //蛇頭向左一格，蛇身x-1格
         if (leftDirection) {
-        	snake_x[0] -= DOT_SIZE;
+            x[0] -= DOT_SIZE;
         }
 
+        //蛇頭向右一格，蛇身x+1格
         if (rightDirection) {
-        	snake_x[0] += DOT_SIZE;
+            x[0] += DOT_SIZE;
         }
 
+        //蛇頭向上一格，蛇身y-1格
         if (upDirection) {
-        	snake_y[0] -= DOT_SIZE;
+            y[0] -= DOT_SIZE;
         }
 
+        //蛇頭向下一格，蛇身y+1格
         if (downDirection) {
-        	snake_y[0] += DOT_SIZE;
+            y[0] += DOT_SIZE;
         }
     }
 
+    //檢查碰撞
     private void checkCollision() {
 
+    	//檢查蛇頭與蛇身是否在同一位置
         for (int z = body; z > 0; z--) {
 
-            if ((snake_x[0] == snake_x[z]) && (snake_y[0] == snake_y[z])) {
+            if ((z > 4) && (x[0] == x[z]) && (y[0] == y[z])) {
                 inGame = false;
             }
         }
 
+<<<<<<< HEAD
+        //檢查蛇頭碰到高度下邊界
         if (snake_y[0] >= B_HEIGHT) {
             inGame = false;
         }
 
+        //檢查蛇頭碰到高度上邊界
         if (snake_y[0] < 0) {
             inGame = false;
         }
 
+        //檢查蛇頭碰到寬度右邊界
         if (snake_x[0] >= B_WIDTH) {
             inGame = false;
         }
 
+        //檢查蛇頭碰到寬度左邊界
         if (snake_x[0] < 0) {
+=======
+        if (y[0] >= B_HEIGHT) {
+            inGame = false;
+        }
+
+        if (y[0] < 0) {
+            inGame = false;
+        }
+
+        if (x[0] >= B_WIDTH) {
+            inGame = false;
+        }
+
+        if (x[0] < 0) {
+>>>>>>> parent of edd1d17... change game properties
             inGame = false;
         }
         
+        //如果狀態為結束遊戲，停止刷新計時器
         if (!inGame) {
             timer.stop();
         }
@@ -213,13 +304,17 @@ public class Board extends JPanel implements ActionListener {
 
     private void locateApple() {
 
+    	//Math.random()亂數範圍在0.0~1.0之間
         int r = (int) (Math.random() * RAND_POS);
         apple_x = ((r * DOT_SIZE));
 
         r = (int) (Math.random() * RAND_POS);
         apple_y = ((r * DOT_SIZE));
+        
+        System.out.print("apple location:"+apple_x+","+apple_y);
     }
 
+    //實作ActionListener
     @Override
     public void actionPerformed(ActionEvent e) {
 
@@ -233,6 +328,7 @@ public class Board extends JPanel implements ActionListener {
         repaint();
     }
 
+    //按鍵事件，改變蛇動向上、下、左、右狀態機
     private class TAdapter extends KeyAdapter {
 
         @Override
